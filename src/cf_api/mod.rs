@@ -60,17 +60,3 @@ pub struct DnsOperationResponse {
     success: bool,
     errors: Vec<Message>,
 }
-
-pub static CLIENT: OnceLock<Client> = OnceLock::new();
-pub fn init_client(token: &str) {
-    CLIENT.get_or_init(|| {
-        let mut headers = HeaderMap::new();
-        headers.insert(
-            AUTHORIZATION,
-            HeaderValue::from_str(&format!("Bearer {}", token)).unwrap(),
-        );
-        headers.insert(USER_AGENT, HeaderValue::from_static("reqwest"));
-
-        Client::builder().default_headers(headers).build().unwrap()
-    });
-}

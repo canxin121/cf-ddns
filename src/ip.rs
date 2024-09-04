@@ -97,6 +97,7 @@ pub enum IpDifference {
 impl IpDifference {
     pub fn apply(
         &self,
+        client: &reqwest::blocking::Client,
         config: &Config,
         zones: &Vec<Zone>,
         dns_records: &HashMap<String, Vec<DnsRecordResult>>,
@@ -118,6 +119,7 @@ impl IpDifference {
                                 .into();
 
                                 match create_dns_record(
+                                    client,
                                     &zone.id,
                                     CfDnsRecord::create(ip.clone(), &record),
                                 ) {
@@ -160,6 +162,7 @@ impl IpDifference {
                                         }
 
                                         match crate::cf_api::delete_dns::delete_dns_record(
+                                            client,
                                             &zone.id,
                                             &dns_record.id,
                                         ) {

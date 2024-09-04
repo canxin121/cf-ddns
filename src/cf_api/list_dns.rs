@@ -1,14 +1,17 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
-use super::{CfDnsRecord, Message, CLIENT};
+use super::{CfDnsRecord, Message};
 
-pub fn list_dns_records(zone_id: &str) -> Result<Vec<DnsRecordResult>> {
+pub fn list_dns_records(
+    client: &reqwest::blocking::Client,
+    zone_id: &str,
+) -> Result<Vec<DnsRecordResult>> {
     let url = format!(
         "https://api.cloudflare.com/client/v4
 /zones/{zone_id}/dns_records"
     );
-    let response = CLIENT.get().unwrap().get(&url).send()?;
+    let response = client.get(&url).send()?;
     let text = response.text()?;
     let dns: ListDns = serde_json::from_str(&text)?;
     if dns.success {

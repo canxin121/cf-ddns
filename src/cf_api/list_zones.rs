@@ -1,12 +1,11 @@
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
-use super::{Message, CLIENT};
-
-pub fn list_zones() -> Result<Vec<Zone>> {
+use super::Message;
+pub fn list_zones(client: &reqwest::blocking::Client) -> Result<Vec<Zone>> {
     let url = "https://api.cloudflare.com/client/v4
 /zones";
-    let response = CLIENT.get().unwrap().get(url).send()?;
+    let response = client.get(url).send()?;
     let text = response.text()?;
     let zones: ListZones = serde_json::from_str(&text)?;
     if zones.success {
