@@ -1,11 +1,12 @@
-## CF-DDNS
+## Cf-ddns
+
+### feature
+Cf-ddns can automatically sync the local machine's IP address with the DNS records on Cloudflare without affecting the DNS records that are manually configured on the web interface or those automatically configured by other machines running the program. This is achieved by using `comment` in the Cloudflare DNS records and a special device name to distinguish between operations performed by different machines and manual operations.
 
 ### usage
-
-put `config.toml` in working dictory
+Put `config.toml` in working dictory
 
 `config.toml` example
-
 ```toml
 token = "cf token"
 device = "a unique device id"
