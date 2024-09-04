@@ -48,3 +48,23 @@ name = "my-site.com"
 [[zones.records]]
 name = "@"
 ```
+
+Then create a service to run the program
+
+Linux systemd example:
+
+```
+[Unit]
+Description=Cloudflare DDNS Service
+After=network.target
+
+[Service]
+ExecStart=/opt/cf-ddns/cf-ddns
+WorkingDirectory=/opt/cf-ddns
+Restart=always
+RestartSec=5
+User=root
+
+[Install]
+WantedBy=multi-user.target
+```
