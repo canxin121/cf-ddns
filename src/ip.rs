@@ -23,6 +23,10 @@ pub fn has_ip_cache() -> bool {
     Path::new(CACHE_FILE).exists()
 }
 
+pub fn del_ip_cache() -> bool {
+    std::fs::remove_file(CACHE_FILE).is_ok()
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

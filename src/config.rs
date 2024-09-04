@@ -1,8 +1,11 @@
-use std::net::IpAddr;
+use std::{
+    hash::{DefaultHasher, Hash, Hasher},
+    net::IpAddr,
+};
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Config {
     pub device: String,
     pub token: String,
@@ -21,15 +24,21 @@ impl Config {
         let config = std::fs::read_to_string("config.toml").expect("Failed to read ./config.toml");
         toml::from_str(&config).unwrap()
     }
+
+    pub fn hash_code(&self) -> u64 {
+        let mut hasher = DefaultHasher::new();
+        self.hash(&mut hasher);
+        hasher.finish()
+    }
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ZoneConfig {
     pub name: String,
     pub records: Vec<DnsRecordConfig>,
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum DnsType {
     #[serde(rename = "all")]
     #[default]
@@ -50,7 +59,7 @@ impl DnsType {
     }
 }
 
-#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Default, Hash, Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct DnsRecordConfig {
     pub name: String,
     #[serde(default)]
