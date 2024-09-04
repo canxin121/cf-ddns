@@ -1,3 +1,3 @@
 /target
-config*
+config.toml
 ip_cache*
