@@ -20,7 +20,7 @@ name = "my-site.cn"
 name = "@"
 
 # below are all optional
-# default: all
+# default: all, ["all", "v4", "v6"]
 type = "all"
 # default: false
 proxied = true
