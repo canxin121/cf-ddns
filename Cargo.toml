@@ -7,7 +7,10 @@ edition = "2021"
 anyhow = "1.0.86"
 ipnetwork = "0.20.0"
 local-ip-address = "0.6.2"
-reqwest = { version = "0.12.7", features = ["blocking"] }
+reqwest = { version = "0.12.7", features = [
+    "blocking",
+    "rustls-tls",
+], default-features = false }
 serde = { version = "1.0.209", features = ["derive"] }
 serde_json = "1.0.127"
 toml = "0.8.19"

@@ -27,6 +27,14 @@ jobs:
             os: ubuntu-latest
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
+          - target: x86_64-unknown-freebsd
+            os: ubuntu-latest
+          - target: riscv64gc-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: powerpc-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: i686-unknown-linux-gnu
+            os: ubuntu-latest
           - target: aarch64-apple-darwin
             os: macos-latest
           - target: x86_64-apple-darwin
@@ -35,7 +43,12 @@ jobs:
             os: macos-latest
           - target: x86_64-pc-windows-msvc
             os: windows-latest
+          - target: aarch64-pc-windows-msvc
+            os: windows-latest
+          - target: aarch64-pc-windows-msvc
+            os: windows-latest
     runs-on: ${{ matrix.os }}
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - uses: taiki-e/upload-rust-binary-action@v1
