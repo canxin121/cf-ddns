@@ -12,9 +12,16 @@ pub fn delete_old_dns_records(config: &Config) -> Result<()> {
     for zone in zones {
         let dns_records = list_dns_records(&zone.id)?;
         for dns_record in dns_records {
+            // delete old dns records by name
+            if dns_record.name.starts_with(&format!("[{}]", config.device)) {
+                match delete_dns_record(&zone.id, &dns_record.id) {
+                    Ok(_) => println!("Deleted dns record: {:?}", dns_record),
+                    Err(e) => eprintln!("Failed to delete dns record: {:?}", e),
+                }
+            }
+            
+            // delete old dns records by ip
             if public_ips.iter().find(|i| dns_record == **i).is_some() {
-                // 这条dns记录是本地的
-                // 如果这个记录不是以[device]开头，则删除
                 if !dns_record.name.starts_with(&format!("[{}]", config.device)) {
                     match delete_dns_record(&zone.id, &dns_record.id) {
                         Ok(_) => println!("Deleted dns record: {:?}", dns_record),
