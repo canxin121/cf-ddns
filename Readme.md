@@ -2,7 +2,7 @@
 
 ### feature
 - Cf-ddns can automatically sync the local machine's IP address with the DNS records on Cloudflare without affecting the DNS records that are manually configured on the web interface or those automatically configured by other machines running the program. This is achieved by using `comment` in the Cloudflare DNS records and a special device name to distinguish between operations performed by different machines and manual operations.
-- Cf-ddns can dynamic load `config.toml`, the modified config will be automically loadded when next interval came. (Alse you can immediately reload config by restart the service mannuly)
+- Cf-ddns can dynamic load `config.toml`, the modified config will be automically loadded when next interval came. (Also you can immediately reload config by restart the service mannuly)
 ### usage
 Put `config.toml` in working dictory
 
