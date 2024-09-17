@@ -1,9 +1,5 @@
-use std::{net::IpAddr, sync::OnceLock};
+use std::net::IpAddr;
 
-use reqwest::{
-    blocking::Client,
-    header::{HeaderMap, HeaderValue, AUTHORIZATION, USER_AGENT},
-};
 use serde::{Deserialize, Serialize};
 
 use crate::config::DnsRecordConfig;

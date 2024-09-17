@@ -1,6 +1,6 @@
 use anyhow::Result;
-use ipnetwork::IpNetwork;
-use local_ip_address::list_afinet_netifas;
+// use ipnetwork::IpNetwork;
+// use local_ip_address::list_afinet_netifas;
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, net::IpAddr, path::Path};
 
@@ -194,43 +194,63 @@ impl IpDifference {
 }
 
 pub fn get_public_ipaddrs() -> Vec<IpAddr> {
-    let ips = match list_afinet_netifas() {
-        Ok(ips) => ips
-            .into_iter()
-            .filter(|(_name, ip)| !is_private_ip(ip))
-            .map(|(_name, ip)| ip)
-            .collect(),
-        Err(e) => {
-            eprintln!("Failed to get public ip addresses: {}", e);
-            vec![]
+    let mut ips: Vec<IpAddr> = Vec::with_capacity(2);
+    if let Ok(resp) = reqwest::blocking::get("https://ipv4.icanhazip.com/") {
+        if let Ok(ip) = resp.text() {
+            if let Ok(ip) = ip.trim().parse() {
+                ips.push(ip);
+            }
         }
-    };
-    println!("Get Public IP addresses: {:?}", ips);
+    }
+
+    if let Ok(resp) = reqwest::blocking::get("https://ipv6.icanhazip.com/") {
+        if let Ok(ip) = resp.text() {
+            if let Ok(ip) = ip.trim().parse() {
+                ips.push(ip);
+            }
+        }
+    }
     ips
 }
 
-fn is_private_ip(ip: &IpAddr) -> bool {
-    let ip_networks = [
-        IpNetwork::V4("0.0.0.0/8".parse().unwrap()), // 当前网络或本地网络
-        IpNetwork::V4("10.0.0.0/8".parse().unwrap()), // 私有网络A类
-        IpNetwork::V4("100.64.0.0/10".parse().unwrap()), // 运营商级私有网络
-        IpNetwork::V4("127.0.0.0/8".parse().unwrap()), // 本机回环地址
-        IpNetwork::V4("169.254.0.0/16".parse().unwrap()), // 链路本地地址（APIPA）
-        IpNetwork::V4("172.16.0.0/12".parse().unwrap()), // 私有网络B类
-        IpNetwork::V4("192.0.0.0/24".parse().unwrap()), // IANA特殊用途地址
-        IpNetwork::V4("192.0.2.0/24".parse().unwrap()), // 文档和测试使用（TEST-NET-1）
-        IpNetwork::V4("192.168.0.0/16".parse().unwrap()), // 私有网络C类
-        IpNetwork::V4("198.18.0.0/15".parse().unwrap()), // 网络间基准测试地址
-        IpNetwork::V4("198.51.100.0/24".parse().unwrap()), // 文档和测试使用（TEST-NET-2）
-        IpNetwork::V4("203.0.113.0/24".parse().unwrap()), // 文档和测试使用（TEST-NET-3）
-        IpNetwork::V4("224.0.0.0/4".parse().unwrap()), // 组播地址
-        IpNetwork::V4("240.0.0.0/4".parse().unwrap()), // 保留地址
-        IpNetwork::V4("255.255.255.255/32".parse().unwrap()), // 广播地址
-        IpNetwork::V6("::1/128".parse().unwrap()),   // IPv6本机回环地址
-        IpNetwork::V6("fc00::/7".parse().unwrap()),  // IPv6私有网络
-        IpNetwork::V6("fe80::/10".parse().unwrap()), // IPv6链路本地地址
-        IpNetwork::V6("ff00::/8".parse().unwrap()),  // IPv6组播地址
-    ];
+// pub fn get_public_ipaddrs() -> Vec<IpAddr> {
+//     let ips = match list_afinet_netifas() {
+//         Ok(ips) => ips
+//             .into_iter()
+//             .filter(|(_name, ip)| !is_private_ip(ip))
+//             .map(|(_name, ip)| ip)
+//             .collect(),
+//         Err(e) => {
+//             eprintln!("Failed to get public ip addresses: {}", e);
+//             vec![]
+//         }
+//     };
+//     println!("Get Public IP addresses: {:?}", ips);
+//     ips
+// }
 
-    ip_networks.iter().any(|net| net.contains(*ip))
-}
+// fn is_private_ip(ip: &IpAddr) -> bool {
+//     let ip_networks = [
+//         IpNetwork::V4("0.0.0.0/8".parse().unwrap()), // 当前网络或本地网络
+//         IpNetwork::V4("10.0.0.0/8".parse().unwrap()), // 私有网络A类
+//         IpNetwork::V4("100.64.0.0/10".parse().unwrap()), // 运营商级私有网络
+//         IpNetwork::V4("127.0.0.0/8".parse().unwrap()), // 本机回环地址
+//         IpNetwork::V4("169.254.0.0/16".parse().unwrap()), // 链路本地地址（APIPA）
+//         IpNetwork::V4("172.16.0.0/12".parse().unwrap()), // 私有网络B类
+//         IpNetwork::V4("192.0.0.0/24".parse().unwrap()), // IANA特殊用途地址
+//         IpNetwork::V4("192.0.2.0/24".parse().unwrap()), // 文档和测试使用（TEST-NET-1）
+//         IpNetwork::V4("192.168.0.0/16".parse().unwrap()), // 私有网络C类
+//         IpNetwork::V4("198.18.0.0/15".parse().unwrap()), // 网络间基准测试地址
+//         IpNetwork::V4("198.51.100.0/24".parse().unwrap()), // 文档和测试使用（TEST-NET-2）
+//         IpNetwork::V4("203.0.113.0/24".parse().unwrap()), // 文档和测试使用（TEST-NET-3）
+//         IpNetwork::V4("224.0.0.0/4".parse().unwrap()), // 组播地址
+//         IpNetwork::V4("240.0.0.0/4".parse().unwrap()), // 保留地址
+//         IpNetwork::V4("255.255.255.255/32".parse().unwrap()), // 广播地址
+//         IpNetwork::V6("::1/128".parse().unwrap()),   // IPv6本机回环地址
+//         IpNetwork::V6("fc00::/7".parse().unwrap()),  // IPv6私有网络
+//         IpNetwork::V6("fe80::/10".parse().unwrap()), // IPv6链路本地地址
+//         IpNetwork::V6("ff00::/8".parse().unwrap()),  // IPv6组播地址
+//     ];
+
+//     ip_networks.iter().any(|net| net.contains(*ip))
+// }
